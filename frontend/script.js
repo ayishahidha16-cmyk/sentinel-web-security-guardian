@@ -8,9 +8,7 @@
 // LIVE BACKEND URL
 // =====================================
 
-const API_BASE_URL =
-    "https://sentinel-web-security-guardian.onrender.com";
-
+const API_BASE_URL = "https://sentinel-backend-odp3.onrender.com";
 
 // =====================================
 // DASHBOARD ELEMENTS
