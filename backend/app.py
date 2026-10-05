@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
 import os
@@ -118,7 +118,153 @@ def incidents():
         for incident in incidents_data
     ])
 
+# ==============================
+# WEBSITE SECURITY SCANNER API
+# ==============================
 
+import requests
+import time
+from urllib.parse import urlparse
+
+
+@app.route("/api/scan", methods=["POST"])
+def scan_website():
+
+    data = request.get_json()
+
+    if not data or "url" not in data:
+        return jsonify({
+            "error": "Website URL is required"
+        }), 400
+
+    url = data["url"].strip()
+
+    # Add HTTPS automatically if missing
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+
+    try:
+        parsed_url = urlparse(url)
+
+        if not parsed_url.netloc:
+            return jsonify({
+                "error": "Invalid website URL"
+            }), 400
+
+        # Measure response time
+        start_time = time.time()
+
+        response = requests.get(
+            url,
+            timeout=10,
+            allow_redirects=True,
+            headers={
+                "User-Agent": "Sentinel-Web-Security-Scanner/1.0"
+            }
+        )
+
+        response_time = round(
+            (time.time() - start_time) * 1000,
+            2
+        )
+
+        headers = response.headers
+
+        # ==============================
+        # SECURITY CHECKS
+        # ==============================
+
+        https_secure = response.url.startswith("https://")
+
+        security_headers = {
+            "Strict-Transport-Security":
+                "Strict-Transport-Security" in headers,
+
+            "Content-Security-Policy":
+                "Content-Security-Policy" in headers,
+
+            "X-Content-Type-Options":
+                "X-Content-Type-Options" in headers,
+
+            "X-Frame-Options":
+                "X-Frame-Options" in headers
+        }
+
+        secure_headers_count = sum(
+            security_headers.values()
+        )
+
+        # Cookie security
+        cookies_secure = True
+
+        set_cookie = headers.get("Set-Cookie", "")
+
+        if set_cookie:
+            cookies_secure = (
+                "Secure" in set_cookie
+                and "HttpOnly" in set_cookie
+            )
+
+        # ==============================
+        # SECURITY SCORE
+        # ==============================
+
+        score = 0
+
+        # HTTPS
+        if https_secure:
+            score += 25
+
+        # HTTP status
+        if 200 <= response.status_code < 400:
+            score += 20
+
+        # Security headers
+        score += secure_headers_count * 8
+
+        # Cookies
+        if cookies_secure:
+            score += 15
+
+        # Response time
+        if response_time < 1000:
+            score += 8
+        elif response_time < 2000:
+            score += 4
+
+        score = min(score, 100)
+
+        return jsonify({
+            "url": response.url,
+            "status_code": response.status_code,
+            "response_time_ms": response_time,
+
+            "https": {
+                "secure": https_secure
+            },
+
+            "security_headers": security_headers,
+
+            "cookies": {
+                "secure": cookies_secure
+            },
+
+            "security_score": score,
+
+            "message": "Website scan completed successfully"
+        })
+
+    except requests.exceptions.Timeout:
+
+        return jsonify({
+            "error": "Website took too long to respond"
+        }), 408
+
+    except requests.exceptions.RequestException as error:
+
+        return jsonify({
+            "error": f"Unable to scan website: {str(error)}"
+        }), 500
 # ==============================
 # STARTUP
 # ==============================

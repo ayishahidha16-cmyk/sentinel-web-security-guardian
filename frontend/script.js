@@ -925,214 +925,193 @@ navItems.forEach(item => {
 
 
 // =====================================
-// SECURITY SCAN
+// REAL WEBSITE SECURITY SCAN
 // =====================================
 
-function startSecurityScan(
-    panel,
-    button
-) {
+async function startSecurityScan(panel, button) {
 
-    if (
-        !panel ||
-        !button
-    ) {
+    if (!panel || !button) {
+        return;
+    }
+
+    const scanResult =
+        panel.querySelector(".scan-result");
+
+    const httpsStatus =
+        panel.querySelector(".scan-https");
+
+    const headersStatus =
+        panel.querySelector(".scan-headers");
+
+    const cookiesStatus =
+        panel.querySelector(".scan-cookies");
+
+    const corsStatus =
+        panel.querySelector(".scan-cors");
+
+
+    // =================================
+    // ASK FOR WEBSITE URL
+    // =================================
+
+    let websiteUrl = prompt(
+        "Enter the website URL to scan:",
+        "https://example.com"
+    );
+
+    if (!websiteUrl) {
         return;
     }
 
 
-    const scanResult =
-        panel.querySelector(
-            ".scan-result"
-        );
+    // =================================
+    // START SCAN
+    // =================================
 
-
-    const httpsStatus =
-        panel.querySelector(
-            ".scan-https"
-        );
-
-
-    const headersStatus =
-        panel.querySelector(
-            ".scan-headers"
-        );
-
-
-    const cookiesStatus =
-        panel.querySelector(
-            ".scan-cookies"
-        );
-
-
-    const corsStatus =
-        panel.querySelector(
-            ".scan-cors"
-        );
-
-
-    // Button
-
-    button.textContent =
-        "⏳ Scanning...";
-
-    button.disabled =
-        true;
-
-
-    // Result
+    button.textContent = "⏳ Scanning...";
+    button.disabled = true;
 
     if (scanResult) {
-
         scanResult.textContent =
-            "🔍 Initializing security scan...";
-
+            "🔍 Sentinel is scanning the website...";
     }
 
 
-    // HTTPS
+    try {
 
-    if (httpsStatus) {
+        const response = await fetch(
+            `${API_BASE_URL}/api/scan`,
+            {
+                method: "POST",
 
-        httpsStatus.textContent =
-            "⏳ Checking...";
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-        httpsStatus.className =
-            "";
-
-    }
-
-
-    // Headers
-
-    if (headersStatus) {
-
-        headersStatus.textContent =
-            "⏳ Checking...";
-
-        headersStatus.className =
-            "";
-
-    }
+                body: JSON.stringify({
+                    url: websiteUrl
+                })
+            }
+        );
 
 
-    // Cookies
-
-    if (cookiesStatus) {
-
-        cookiesStatus.textContent =
-            "⏳ Waiting...";
-
-        cookiesStatus.className =
-            "";
-
-    }
+        const data = await response.json();
 
 
-    // CORS
+        // =================================
+        // ERROR
+        // =================================
 
-    if (corsStatus) {
+        if (!response.ok) {
 
-        corsStatus.textContent =
-            "⏳ Waiting...";
+            throw new Error(
+                data.error || "Website scan failed"
+            );
 
-        corsStatus.className =
-            "";
-
-    }
+        }
 
 
-    // =================================
-    // HTTPS
-    // =================================
-
-    setTimeout(() => {
+        // =================================
+        // HTTPS RESULT
+        // =================================
 
         if (httpsStatus) {
 
-            httpsStatus.textContent =
-                "✓ Secure";
+            if (data.https.secure) {
 
-            httpsStatus.className =
-                "safe";
+                httpsStatus.textContent =
+                    "✓ Secure";
+
+                httpsStatus.className =
+                    "safe";
+
+            } else {
+
+                httpsStatus.textContent =
+                    "⚠ Not Secure";
+
+                httpsStatus.className =
+                    "warning-text";
+
+            }
 
         }
 
 
-        if (scanResult) {
-
-            scanResult.textContent =
-                "🔐 HTTPS encryption verified.";
-
-        }
-
-    }, 1000);
-
-
-    // =================================
-    // SECURITY HEADERS
-    // =================================
-
-    setTimeout(() => {
+        // =================================
+        // SECURITY HEADERS
+        // =================================
 
         if (headersStatus) {
 
-            headersStatus.textContent =
-                "✓ Secure";
+            const headers =
+                data.security_headers;
 
-            headersStatus.className =
-                "safe";
+            const secureCount =
+                Object.values(headers)
+                    .filter(Boolean)
+                    .length;
+
+            const totalHeaders =
+                Object.keys(headers).length;
+
+
+            if (secureCount === totalHeaders) {
+
+                headersStatus.textContent =
+                    "✓ All Secure";
+
+                headersStatus.className =
+                    "safe";
+
+            } else {
+
+                headersStatus.textContent =
+                    `⚠ ${secureCount}/${totalHeaders} Secure`;
+
+                headersStatus.className =
+                    "warning-text";
+
+            }
 
         }
 
 
-        if (scanResult) {
-
-            scanResult.textContent =
-                "🛡️ Security headers verified.";
-
-        }
-
-    }, 2000);
-
-
-    // =================================
-    // COOKIES
-    // =================================
-
-    setTimeout(() => {
+        // =================================
+        // COOKIE RESULT
+        // =================================
 
         if (cookiesStatus) {
 
-            cookiesStatus.textContent =
-                "✓ Secure";
+            if (data.cookies.secure) {
 
-            cookiesStatus.className =
-                "safe";
+                cookiesStatus.textContent =
+                    "✓ Secure";
+
+                cookiesStatus.className =
+                    "safe";
+
+            } else {
+
+                cookiesStatus.textContent =
+                    "⚠ Review";
+
+                cookiesStatus.className =
+                    "warning-text";
+
+            }
 
         }
 
 
-        if (scanResult) {
-
-            scanResult.textContent =
-                "🍪 Cookie protection verified.";
-
-        }
-
-    }, 3000);
-
-
-    // =================================
-    // CORS
-    // =================================
-
-    setTimeout(() => {
+        // =================================
+        // CORS
+        // =================================
 
         if (corsStatus) {
 
             corsStatus.textContent =
-                "⚠ Review";
+                "ℹ Inspected";
 
             corsStatus.className =
                 "warning-text";
@@ -1140,40 +1119,73 @@ function startSecurityScan(
         }
 
 
-        if (scanResult) {
-
-            scanResult.textContent =
-                "🌐 CORS policy requires review.";
-
-        }
-
-    }, 4000);
-
-
-    // =================================
-    // COMPLETE
-    // =================================
-
-    setTimeout(() => {
+        // =================================
+        // FINAL RESULT
+        // =================================
 
         if (scanResult) {
 
-            scanResult.textContent =
-                "✓ Security scan completed — 1 item needs review";
+            scanResult.innerHTML = `
+                ✓ Scan completed<br>
+                Security Score:
+                <strong>
+                    ${data.security_score}/100
+                </strong>
+                <br>
+                HTTP Status:
+                ${data.status_code}
+                <br>
+                Response Time:
+                ${data.response_time_ms} ms
+            `;
 
         }
+
+
+        // =================================
+        // CONSOLE RESULT
+        // =================================
+
+        console.log(
+            "🛡️ Sentinel website scan result:",
+            data
+        );
 
 
         button.textContent =
             "🔄 Run Again";
 
-        button.disabled =
-            false;
+    }
 
-    }, 4500);
+
+    catch (error) {
+
+        console.error(
+            "❌ Website scan failed:",
+            error
+        );
+
+
+        if (scanResult) {
+
+            scanResult.textContent =
+                `❌ ${error.message}`;
+
+        }
+
+        button.textContent =
+            "🔄 Try Again";
+
+    }
+
+
+    finally {
+
+        button.disabled = false;
+
+    }
 
 }
-
 
 // =====================================
 // SECURITY SCAN BUTTON HANDLER
