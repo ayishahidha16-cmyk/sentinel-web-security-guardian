@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<head>
+
+
+    <title>Sentinel | Web Security Guardian</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        
+        <aside class="sidebar">
+
+            <div class="logo">
+                🛡️ <span>SENTINEL</span>
+            </div>
+
+            <p class="tagline">Web Security Guardian</p>
+
+            <nav>
+    <a href="#" class="active" id="dashboardNav">🏠 Dashboard</a>
+    <a href="#" id="securityNav">🔐 Security</a>
+    <a href="#" id="performanceNav">📊 Performance</a>
+    <a href="#" id="incidentsNav">🚨 Incidents</a>
+    <a href="#" id="settingsNav">⚙️ Settings</a>
+</nav>
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Online
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Header -->
+            <header class="topbar">
+
+                <div>
+                    <h1>Security Dashboard</h1>
+                    <p>Monitor your web application in real time.</p>
+                </div>
+
+                <div class="live-status">
+                    <span class="live-dot"></span>
+                    LIVE
+                </div>
+
+            </header>
+
+
+            <!-- Score Cards -->
+            <section class="stats">
+
+                <div class="card">
+                    <div class="card-title">
+                        🛡️ Security Score
+                    </div>
+
+                    <div class="score">
+                        92<span>/100</span>
+                    </div>
+
+                    <p class="good">● Excellent</p>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-title">
+                        ⚡ Performance
+                    </div>
+
+                    <div class="score">
+                        87<span>/100</span>
+                    </div>
+
+                    <p class="good">● Good</p>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-title">
+                        🌐 Requests
+                    </div>
+
+                    <div class="score">
+                        14.2K
+                    </div>
+
+                    <p>Today</p>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-title">
+                        🚨 Threats
+                    </div>
+
+                    <div class="score">
+                        03
+                    </div>
+
+                    <p class="warning">● Attention</p>
+                </div>
+
+            </section>
+
+
+            <!-- Content Grid -->
+            <section class="dashboard-grid">
+
+                <!-- Traffic -->
+                <div class="panel traffic-panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h2>Traffic Overview</h2>
+                            <p>Incoming requests</p>
+                        </div>
+
+                        <span class="badge">LIVE</span>
+                    </div>
+
+                   <div class="chart-placeholder">
+
+    <svg id="trafficChart" viewBox="0 0 700 220" preserveAspectRatio="none">
+
+        <polyline
+    id="trafficLine"
+    points="0,150 70,145 140,152 210,140 280,148 350,135 420,142 490,130 560,138 630,125 700,132"
+    fill="none"
+    stroke="#36d399"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+/>
+
+    </svg>
+
+    <div class="chart-text">
+        Traffic monitoring active
+    </div>
+
+</div>
+
+                </div>
+
+
+              <!-- Security -->
+<!-- Security -->
+<div class="panel security-status-panel">
+
+    <div class="panel-header">
+        <div>
+            <h2>Security Status</h2>
+            <p>Latest security checks</p>
+        </div>
+
+        <button id="securityScanBtn" class="scan-btn">
+            🔍 Run Scan
+        </button>
+    </div>
+
+
+    <!-- HTTPS Check -->
+    <div class="security-item">
+        <span>HTTPS</span>
+        <strong id="httpsStatus" class="safe">
+            ✓ Secure
+        </strong>
+    </div>
+
+
+    <!-- Security Headers Check -->
+    <div class="security-item">
+        <span>Security Headers</span>
+        <strong id="headersStatus" class="warning-text">
+            ⚠ Review
+        </strong>
+    </div>
+
+
+    <!-- Cookies Check -->
+    <div class="security-item">
+        <span>Cookies</span>
+        <strong id="cookiesStatus" class="safe">
+            ✓ Secure
+        </strong>
+    </div>
+
+
+    <!-- CORS Check -->
+    <div class="security-item">
+        <span>CORS</span>
+        <strong id="corsStatus" class="warning-text">
+            ⚠ Review
+        </strong>
+    </div>
+
+
+    <!-- Scan Result -->
+    <div id="scanResult" class="scan-result">
+        Ready to scan
+    </div>
+
+
+</section>
+            <!-- Alerts -->
+            <section class="panel alerts-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2>Recent Alerts</h2>
+                        <p>Latest events detected by Sentinel</p>
+                    </div>
+
+                    <button id="simulateBtn">
+                        🚨 Simulate Traffic Spike
+                    </button>
+                </div>
+
+
+                <div id="alerts">
+
+                    <div class="alert">
+                        <span class="alert-icon red">!</span>
+
+                        <div>
+                            <strong>Suspicious Traffic Detected</strong>
+                            <p>Unusual request pattern detected.</p>
+                        </div>
+
+                        <small>2 min ago</small>
+                    </div>
+
+
+                    <div class="alert">
+                        <span class="alert-icon yellow">!</span>
+
+                        <div>
+                            <strong>Performance Warning</strong>
+                            <p>API response time increased.</p>
+                        </div>
+
+                        <small>8 min ago</small>
+                    </div>
+
+
+                    <div class="alert">
+                        <span class="alert-icon green">✓</span>
+
+                        <div>
+                            <strong>Security Scan Completed</strong>
+                            <p>No critical vulnerabilities detected.</p>
+                        </div>
+
+                        <small>15 min ago</small>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
