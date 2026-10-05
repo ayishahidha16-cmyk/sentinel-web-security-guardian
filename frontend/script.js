@@ -5,11 +5,22 @@
 
 
 // =====================================
+// LIVE BACKEND URL
+// =====================================
+
+const API_BASE_URL =
+    "https://sentinel-web-security-guardian.onrender.com";
+
+
+// =====================================
 // DASHBOARD ELEMENTS
 // =====================================
 
-const simulateBtn = document.getElementById("simulateBtn");
-const alertsContainer = document.getElementById("alerts");
+const simulateBtn =
+    document.getElementById("simulateBtn");
+
+const alertsContainer =
+    document.getElementById("alerts");
 
 
 // =====================================
@@ -18,13 +29,18 @@ const alertsContainer = document.getElementById("alerts");
 
 function findCard(title) {
 
-    const cards = document.querySelectorAll(".card");
+    const cards =
+        document.querySelectorAll(".card");
 
     for (const card of cards) {
 
-        const cardTitle = card.querySelector(".card-title");
+        const cardTitle =
+            card.querySelector(".card-title");
 
-        if (cardTitle && cardTitle.textContent.includes(title)) {
+        if (
+            cardTitle &&
+            cardTitle.textContent.includes(title)
+        ) {
             return card;
         }
     }
@@ -33,23 +49,38 @@ function findCard(title) {
 }
 
 
-const securityCard = findCard("Security Score");
-const performanceCard = findCard("Performance");
-const requestsCard = findCard("Requests");
-const threatsCard = findCard("Threats");
+const securityCard =
+    findCard("Security Score");
+
+const performanceCard =
+    findCard("Performance");
+
+const requestsCard =
+    findCard("Requests");
+
+const threatsCard =
+    findCard("Threats");
 
 
-const securityScore = securityCard?.querySelector(".score");
-const performanceScore = performanceCard?.querySelector(".score");
-const requestsScore = requestsCard?.querySelector(".score");
-const threatsScore = threatsCard?.querySelector(".score");
+const securityScore =
+    securityCard?.querySelector(".score");
+
+const performanceScore =
+    performanceCard?.querySelector(".score");
+
+const requestsScore =
+    requestsCard?.querySelector(".score");
+
+const threatsScore =
+    threatsCard?.querySelector(".score");
 
 
 // =====================================
 // REAL-TIME TRAFFIC GRAPH
 // =====================================
 
-const trafficLine = document.getElementById("trafficLine");
+const trafficLine =
+    document.getElementById("trafficLine");
 
 let trafficPoints = [
 
@@ -75,7 +106,9 @@ function updateTrafficGraph() {
     trafficPoints.shift();
 
     const lastPoint =
-        trafficPoints[trafficPoints.length - 1];
+        trafficPoints[
+            trafficPoints.length - 1
+        ];
 
     const newX = 700;
 
@@ -96,7 +129,10 @@ function updateTrafficGraph() {
 
     const pointsString =
         trafficPoints
-            .map(point => `${point[0]},${point[1]}`)
+            .map(
+                point =>
+                    `${point[0]},${point[1]}`
+            )
             .join(" ");
 
 
@@ -126,7 +162,8 @@ if (simulateBtn) {
             simulateBtn.textContent =
                 "⏳ Detecting...";
 
-            simulateBtn.disabled = true;
+            simulateBtn.disabled =
+                true;
 
 
             setTimeout(() => {
@@ -139,7 +176,6 @@ if (simulateBtn) {
                     securityScore.innerHTML = `
                         86<span>/100</span>
                     `;
-
                 }
 
 
@@ -150,7 +186,6 @@ if (simulateBtn) {
                     performanceScore.innerHTML = `
                         72<span>/100</span>
                     `;
-
                 }
 
 
@@ -161,7 +196,6 @@ if (simulateBtn) {
                     requestsScore.innerHTML = `
                         18.7K
                     `;
-
                 }
 
 
@@ -172,7 +206,6 @@ if (simulateBtn) {
                     threatsScore.innerHTML = `
                         04
                     `;
-
                 }
 
 
@@ -181,15 +214,15 @@ if (simulateBtn) {
                 if (alertsContainer) {
 
                     const newAlert =
-                        document.createElement("div");
-
+                        document.createElement(
+                            "div"
+                        );
 
                     newAlert.className =
                         "alert";
 
 
                     newAlert.innerHTML = `
-
                         <span class="alert-icon red">
                             !
                         </span>
@@ -209,14 +242,12 @@ if (simulateBtn) {
                         <small>
                             Just now
                         </small>
-
                     `;
 
 
                     alertsContainer.prepend(
                         newAlert
                     );
-
                 }
 
 
@@ -242,18 +273,14 @@ if (simulateBtn) {
 
 
                     trafficLine.setAttribute(
-
                         "points",
-
                         trafficPoints
                             .map(
                                 point =>
                                     `${point[0]},${point[1]}`
                             )
                             .join(" ")
-
                     );
-
                 }
 
 
@@ -270,7 +297,6 @@ if (simulateBtn) {
 
         }
     );
-
 }
 
 
@@ -302,7 +328,7 @@ const dashboardContent =
 // NAVIGATION CLICK
 // =====================================
 
-navItems.forEach((item) => {
+navItems.forEach(item => {
 
     item.addEventListener(
         "click",
@@ -313,7 +339,7 @@ navItems.forEach((item) => {
 
             // Active menu
 
-            navItems.forEach((nav) => {
+            navItems.forEach(nav => {
 
                 nav.classList.remove(
                     "active"
@@ -343,7 +369,7 @@ navItems.forEach((item) => {
 
 
                 dashboardContent.forEach(
-                    (element) => {
+                    element => {
 
                         element.style.display =
                             "";
@@ -360,9 +386,7 @@ navItems.forEach((item) => {
 
                 loadBackendData();
 
-
                 return;
-
             }
 
 
@@ -371,7 +395,7 @@ navItems.forEach((item) => {
             // =================================
 
             dashboardContent.forEach(
-                (element) => {
+                element => {
 
                     element.style.display =
                         "none";
@@ -612,7 +636,6 @@ navItems.forEach((item) => {
                     </section>
 
                 `;
-
             }
 
 
@@ -717,7 +740,6 @@ navItems.forEach((item) => {
                     </section>
 
                 `;
-
             }
 
 
@@ -768,8 +790,6 @@ navItems.forEach((item) => {
                         </div>
 
 
-                        <!-- DATABASE INCIDENTS WILL APPEAR HERE -->
-
                         <div class="incidents-list">
 
                             <p>
@@ -782,7 +802,6 @@ navItems.forEach((item) => {
                     </section>
 
                 `;
-
             }
 
 
@@ -875,7 +894,6 @@ navItems.forEach((item) => {
                     </section>
 
                 `;
-
             }
 
 
@@ -901,7 +919,6 @@ navItems.forEach((item) => {
             }
 
         }
-
     );
 
 });
@@ -1207,7 +1224,7 @@ async function loadBackendData() {
 
         const response =
             await fetch(
-                "http://127.0.0.1:5000/api/status"
+                `${API_BASE_URL}/api/status`
             );
 
 
@@ -1304,7 +1321,7 @@ async function loadIncidents() {
 
         const response =
             await fetch(
-                "http://127.0.0.1:5000/api/incidents"
+                `${API_BASE_URL}/api/incidents`
             );
 
 
@@ -1354,14 +1371,14 @@ async function loadIncidents() {
 
         // If no incidents
 
-        if (incidents.length === 0) {
+        if (
+            incidents.length === 0
+        ) {
 
             incidentsContainer.innerHTML = `
-
                 <p>
                     No incidents found.
                 </p>
-
             `;
 
             return;
@@ -1372,7 +1389,7 @@ async function loadIncidents() {
         // Create incident cards
 
         incidents.forEach(
-            (incident) => {
+            incident => {
 
 
                 const incidentCard =
