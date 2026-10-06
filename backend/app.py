@@ -169,6 +169,8 @@ def scan_website():
         )
 
         headers = response.headers
+        cors_header = headers.get("Access-Control-Allow-Origin")
+        cors_status = "Configured" if cors_header else "Not Configured"
 
         # ==============================
         # SECURITY CHECKS
@@ -234,25 +236,33 @@ def scan_website():
 
         score = min(score, 100)
 
+        
+        
         return jsonify({
-            "url": response.url,
-            "status_code": response.status_code,
-            "response_time_ms": response_time,
+    "url": response.url,
+    "status_code": response.status_code,
+    "response_time_ms": response_time,
 
-            "https": {
-                "secure": https_secure
-            },
+    "https": {
+        "secure": https_secure
+    },
 
-            "security_headers": security_headers,
+    "security_headers": security_headers,
 
-            "cookies": {
-                "secure": cookies_secure
-            },
+    "cookies": {
+        "secure": cookies_secure
+    },
 
-            "security_score": score,
+    "cors": {
+        "configured": cors_header is not None,
+        "status": cors_status,
+        "value": cors_header
+    },
 
-            "message": "Website scan completed successfully"
-        })
+    "security_score": score,
+
+    "message": "Website scan completed successfully"
+})
 
     except requests.exceptions.Timeout:
 

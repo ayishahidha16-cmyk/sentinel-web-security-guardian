@@ -525,8 +525,8 @@ navItems.forEach(item => {
                                 ⚠️ Issues
                             </div>
 
-                            <div class="score">
-                                02
+                            <div class="score" id="issuesCount">
+                                 02
                             </div>
 
                             <p class="warning">
@@ -1102,19 +1102,31 @@ async function startSecurityScan(panel, button) {
         }
 
 
-        // =================================
-        // CORS
-        // =================================
+ // =================================
+// CORS
+// =================================
 
-        if (corsStatus) {
+if (corsStatus) {
 
-            corsStatus.textContent =
-                "ℹ Inspected";
+    if (data.cors && data.cors.configured) {
 
-            corsStatus.className =
-                "warning-text";
+        corsStatus.textContent =
+            "✓ Configured";
 
-        }
+        corsStatus.className =
+            "good-text";
+
+    } else {
+
+        corsStatus.textContent =
+            "⚠ Not Configured";
+
+        corsStatus.className =
+            "warning-text";
+
+    }
+
+}      
 
 
 // =================================
@@ -1150,6 +1162,26 @@ if (scanResult) {
         ${data.response_time_ms} ms
     `;
 
+}
+        // =================================
+// UPDATE ISSUES COUNT
+// =================================
+
+const headerIssues = Object.values(
+    data.security_headers || {}
+).filter(value => value === false).length;
+
+const corsIssue =
+    data.cors && data.cors.configured === false ? 1 : 0;
+
+const totalIssues = headerIssues + corsIssue;
+
+const issuesCount =
+    document.getElementById("issuesCount");
+
+if (issuesCount) {
+    issuesCount.textContent =
+        String(totalIssues).padStart(2, "0");
 }
         // =================================
         // CONSOLE RESULT
