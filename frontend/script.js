@@ -1118,12 +1118,15 @@ async function startSecurityScan(panel, button) {
 
 
 // =================================
-// UPDATE TOP SECURITY SCORE
+// UPDATE SECURITY PAGE SCORE
 // =================================
 
-if (securityScore) {
+const currentSecurityScore =
+    panel.querySelector(".stats .card .score");
 
-    securityScore.innerHTML =
+if (currentSecurityScore) {
+
+    currentSecurityScore.innerHTML =
         `${data.security_score}<span>/100</span>`;
 
 }
