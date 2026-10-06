@@ -1117,29 +1117,39 @@ async function startSecurityScan(panel, button) {
         }
 
 
-        // =================================
-        // FINAL RESULT
-        // =================================
+// =================================
+// UPDATE TOP SECURITY SCORE
+// =================================
 
-        if (scanResult) {
+if (securityScore) {
 
-            scanResult.innerHTML = `
-                ✓ Scan completed<br>
-                Security Score:
-                <strong>
-                    ${data.security_score}/100
-                </strong>
-                <br>
-                HTTP Status:
-                ${data.status_code}
-                <br>
-                Response Time:
-                ${data.response_time_ms} ms
-            `;
+    securityScore.innerHTML =
+        `${data.security_score}<span>/100</span>`;
 
-        }
+}
 
 
+// =================================
+// FINAL RESULT
+// =================================
+
+if (scanResult) {
+
+    scanResult.innerHTML = `
+        ✓ Scan completed<br>
+        Security Score:
+        <strong>
+            ${data.security_score}/100
+        </strong>
+        <br>
+        HTTP Status:
+        ${data.status_code}
+        <br>
+        Response Time:
+        ${data.response_time_ms} ms
+    `;
+
+}
         // =================================
         // CONSOLE RESULT
         // =================================
