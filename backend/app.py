@@ -280,7 +280,66 @@ def scan_website():
 # ==============================
 
 init_db()
+@app.route("/api/uptime", methods=["POST"])
+def uptime_check():
 
+    data = request.get_json()
+
+    if not data or "url" not in data:
+        return jsonify({
+            "error": "Website URL is required"
+        }), 400
+
+    url = data["url"].strip()
+
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+
+    try:
+        parsed_url = urlparse(url)
+
+        if not parsed_url.netloc:
+            return jsonify({
+                "error": "Invalid website URL"
+            }), 400
+
+        start_time = time.time()
+
+        response = requests.get(
+            url,
+            timeout=10,
+            allow_redirects=True,
+            headers={
+                "User-Agent": "Sentinel-Uptime-Monitor/1.0"
+            }
+        )
+
+        response_time = round(
+            (time.time() - start_time) * 1000,
+            2
+        )
+
+        is_up = 200 <= response.status_code < 400
+
+        return jsonify({
+            "url": response.url,
+            "status": "UP" if is_up else "DOWN",
+            "status_code": response.status_code,
+            "response_time_ms": response_time,
+            "message": "Uptime check completed successfully"
+        })
+
+    except requests.exceptions.Timeout:
+        return jsonify({
+            "status": "DOWN",
+            "error": "Website took too long to respond"
+        }), 408
+
+    except requests.exceptions.RequestException as error:
+        return jsonify({
+            "status": "DOWN",
+            "error": f"Unable to reach website: {str(error)}"
+        }), 500
 
 if __name__ == "__main__":
     app.run(

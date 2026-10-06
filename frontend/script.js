@@ -734,12 +734,87 @@ navItems.forEach(item => {
 
                         </div>
 
+                    <!-- =================================
+                         UPTIME MONITOR
+                         ================================= -->
 
+                    <section class="panel uptime-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h2>
+                                    🌐 Uptime Monitor
+                                </h2>
+
+                                <p>
+                                    Check whether a website is reachable and responsive.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            style="
+                                display: flex;
+                                gap: 10px;
+                                flex-wrap: wrap;
+                                margin-top: 18px;
+                            "
+                        >
+
+                            <input
+                                type="text"
+                                id="uptimeUrl"
+                                placeholder="https://example.com"
+                                style="
+                                    flex: 1;
+                                    min-width: 220px;
+                                    padding: 11px 13px;
+                                    border-radius: 8px;
+                                    border: 1px solid rgba(255,255,255,0.12);
+                                    background: #0d1624;
+                                    color: #ffffff;
+                                    outline: none;
+                                "
+                            >
+
+                            <button
+                                class="scan-btn"
+                                id="uptimeCheckBtn"
+                                type="button"
+                            >
+                                🔍 Check Uptime
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="uptime-result"
+                            id="uptimeResult"
+                            style="
+                                margin-top: 18px;
+                                padding: 14px;
+                                border-radius: 8px;
+                                background: rgba(54,211,153,0.08);
+                                border: 1px solid rgba(54,211,153,0.20);
+                                color: #36d399;
+                                font-size: 13px;
+                            "
+                        >
+                            Enter a website URL and check its uptime.
+                        </div>
+
+                    </section>
                     </section>
 
                 `;
             }
-
+                     
 
             // =================================
             // INCIDENTS PAGE
@@ -1539,4 +1614,188 @@ async function loadIncidents() {
 
 console.log(
     "🛡️ Sentinel Web Security Guardian loaded successfully."
+);
+// =====================================
+// UPTIME MONITOR FUNCTION
+// =====================================
+
+async function checkUptime() {
+
+    const urlInput =
+        document.getElementById("uptimeUrl");
+
+    const checkButton =
+        document.getElementById("uptimeCheckBtn");
+
+    const result =
+        document.getElementById("uptimeResult");
+
+
+    if (!urlInput || !checkButton || !result) {
+        return;
+    }
+
+
+    let websiteUrl =
+        urlInput.value.trim();
+
+
+    if (!websiteUrl) {
+
+        result.textContent =
+            "⚠️ Please enter a website URL.";
+
+        return;
+    }
+
+
+    if (
+        !websiteUrl.startsWith("http://") &&
+        !websiteUrl.startsWith("https://")
+    ) {
+
+        websiteUrl =
+            "https://" + websiteUrl;
+    }
+
+
+    checkButton.textContent =
+        "⏳ Checking...";
+
+    checkButton.disabled =
+        true;
+
+
+    result.textContent =
+        "🔍 Sentinel is checking website availability...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/uptime`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        url: websiteUrl
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Uptime check failed"
+            );
+        }
+
+
+        if (data.status === "UP") {
+
+            result.innerHTML = `
+                <strong style="font-size:16px;">
+                    🟢 WEBSITE UP
+                </strong>
+
+                <br><br>
+
+                URL: ${data.url}
+
+                <br>
+
+                HTTP Status:
+                ${data.status_code}
+
+                <br>
+
+                Response Time:
+                ${data.response_time_ms} ms
+            `;
+
+            result.style.color =
+                "#36d399";
+
+        } else {
+
+            result.innerHTML = `
+                <strong style="font-size:16px;">
+                    🔴 WEBSITE DOWN
+                </strong>
+
+                <br><br>
+
+                ${data.error ||
+                "Website is not responding."}
+            `;
+
+            result.style.color =
+                "#ff5c5c";
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Uptime check failed:",
+            error
+        );
+
+
+        result.innerHTML = `
+            <strong>
+                🔴 WEBSITE DOWN
+            </strong>
+
+            <br><br>
+
+            ${error.message}
+        `;
+
+        result.style.color =
+            "#ff5c5c";
+
+
+    } finally {
+
+        checkButton.textContent =
+            "🔍 Check Uptime";
+
+        checkButton.disabled =
+            false;
+    }
+}
+
+
+// =====================================
+// UPTIME BUTTON CLICK
+// =====================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            event.target.closest(
+                "#uptimeCheckBtn"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        checkUptime();
+    }
 );
