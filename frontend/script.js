@@ -8,7 +8,7 @@
 // LIVE BACKEND URL
 // =====================================
 
-const API_BASE_URL = "https://sentinel-backend-odp3.onrender.com";
+const API_BASE_URL = "http://127.0.0.1:5000";
 
 // =====================================
 // DASHBOARD ELEMENTS
@@ -444,11 +444,11 @@ navItems.forEach(item => {
                         <div>
 
                             <h1>
-                                Security
+                               Website Security
                             </h1>
 
                             <p>
-                                Monitor and manage your web application security.
+                                Monitor your website security, headers and protection status.
                             </p>
 
                         </div>
@@ -652,11 +652,11 @@ navItems.forEach(item => {
                         <div>
 
                             <h1>
-                                Performance
+                                 Website Performance
                             </h1>
 
                             <p>
-                                Monitor application performance in real time.
+                               Monitor your website speed, response time and availability. 
                             </p>
 
                         </div>
@@ -749,7 +749,7 @@ navItems.forEach(item => {
                                 </h2>
 
                                 <p>
-                                    Check whether a website is reachable and responsive.
+                                    Track website availability, response time and service health.
                                 </p>
 
                             </div>
@@ -817,65 +817,73 @@ navItems.forEach(item => {
                      
 
             // =================================
-            // INCIDENTS PAGE
-            // =================================
+// INCIDENTS PAGE
+// =================================
 
-            else if (
-                page.includes("Incidents")
-            ) {
+else if (
+    page.includes("Incidents")
+) {
 
-                newPage.innerHTML = `
+    newPage.innerHTML = `
 
-                    <header class="topbar">
+        <header class="topbar">
 
-                        <div>
+            <div>
 
-                            <h1>
-                                Incidents
-                            </h1>
+                <h1>
+                    Incidents
+                </h1>
 
-                            <p>
-                                Track security incidents detected by Sentinel.
-                            </p>
+                <p>
+                    Track security incidents detected by Sentinel.
+                </p>
 
-                        </div>
+            </div>
 
-                    </header>
-
-
-                    <section class="panel">
+        </header>
 
 
-                        <div class="panel-header">
+        <section class="panel">
 
-                            <div>
+            <div class="panel-header">
 
-                                <h2>
-                                    Active Incidents
-                                </h2>
+                <div>
 
-                                <p>
-                                    Recent security events
-                                </p>
+                    <h2>
+                        Active Incidents
+                    </h2>
 
-                            </div>
+                    <p>
+                        Recent security events
+                    </p>
 
-                        </div>
+                </div>
 
+                <span class="badge">
+                    INCIDENTS
+                </span>
 
-                        <div class="incidents-list">
-
-                            <p>
-                                Loading incidents...
-                            </p>
-
-                        </div>
+            </div>
 
 
-                    </section>
+            <div
+                class="incidents-list"
+                id="incidentsList"
+            >
 
-                `;
-            }
+                <p>
+                    Loading incidents...
+                </p>
+
+            </div>
+
+
+        </section>
+
+    `;
+
+    loadIncidents();
+}
 
 
             // =================================
@@ -1797,5 +1805,351 @@ document.addEventListener(
         }
 
         checkUptime();
+    }
+);
+// =====================================
+// WEBSITE ANALYZER
+// =====================================
+
+async function analyzeWebsite() {
+
+    const urlInput =
+        document.getElementById("websiteUrl");
+
+    const analyzeButton =
+        document.getElementById("analyzeWebsiteBtn");
+
+    const result =
+        document.getElementById("websiteAnalyzerResult");
+
+    if (!urlInput || !analyzeButton || !result) {
+        return;
+    }
+
+    let websiteUrl =
+        urlInput.value.trim();
+
+    if (!websiteUrl) {
+
+        result.textContent =
+            "⚠️ Please enter a website URL.";
+
+        return;
+    }
+
+    if (
+        !websiteUrl.startsWith("http://") &&
+        !websiteUrl.startsWith("https://")
+    ) {
+        websiteUrl =
+            "https://" + websiteUrl;
+    }
+
+    analyzeButton.textContent =
+        "⏳ Analyzing...";
+
+    analyzeButton.disabled =
+        true;
+
+    result.innerHTML =
+        "🔍 Sentinel is analyzing the website...";
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/scan`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        url: websiteUrl
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Website analysis failed"
+            );
+        }
+
+        result.innerHTML = `
+    <div style="text-align:center;">
+
+        <div style="
+            font-size:12px;
+            color:#8fa3bf;
+            margin-bottom:8px;
+        ">
+            WEBSITE HEALTH
+        </div>
+
+        <div style="
+            font-size:42px;
+            font-weight:700;
+            color:${
+                data.security_score >= 80
+                    ? "#36d399"
+                    : data.security_score >= 60
+                    ? "#f5b942"
+                    : "#ff5c5c"
+            };
+        ">
+            ${data.security_score}
+            <span style="font-size:18px;color:#71839d;">
+                /100
+            </span>
+        </div>
+
+        <div style="
+            margin-top:5px;
+            color:${
+                data.security_score >= 80
+                    ? "#36d399"
+                    : data.security_score >= 60
+                    ? "#f5b942"
+                    : "#ff5c5c"
+            };
+        ">
+            ${
+                data.security_score >= 80
+                    ? "Excellent"
+                    : data.security_score >= 60
+                    ? "Needs Attention"
+                    : "Critical"
+            }
+        </div>
+
+        <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            margin-top:18px;
+            text-align:left;
+        ">
+
+            <div style="
+                padding:12px;
+                border-radius:8px;
+                background:rgba(255,255,255,0.03);
+            ">
+                <small>HTTP STATUS</small><br>
+                <strong style="color:#36d399;">
+                    ${data.status_code}
+                </strong>
+            </div>
+
+            <div style="
+                padding:12px;
+                border-radius:8px;
+                background:rgba(255,255,255,0.03);
+            ">
+                <small>RESPONSE TIME</small><br>
+                <strong>
+                    ${data.response_time_ms} ms
+                </strong>
+            </div>
+
+            <div style="
+                padding:12px;
+                border-radius:8px;
+                background:rgba(255,255,255,0.03);
+            ">
+                <small>HTTPS</small><br>
+                <strong style="
+                    color:${data.https.secure ? "#36d399" : "#ff5c5c"};
+                ">
+                    ${data.https.secure ? "✓ Secure" : "⚠ Not Secure"}
+                </strong>
+            </div>
+
+            <div style="
+                padding:12px;
+                border-radius:8px;
+                background:rgba(255,255,255,0.03);
+            ">
+                <small>CORS</small><br>
+                <strong style="
+                    color:${
+                        data.cors && data.cors.configured
+                            ? "#36d399"
+                            : "#f5b942"
+                    };
+                ">
+                    ${
+                        data.cors && data.cors.configured
+                            ? "✓ Configured"
+                            : "⚠ Review"
+                    }
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+`;
+
+        result.style.color =
+            "#36d399";
+
+    } catch (error) {
+
+        console.error(
+            "❌ Website analysis failed:",
+            error
+        );
+
+        result.innerHTML = `
+            <strong>
+                ❌ Analysis Failed
+            </strong>
+
+            <br><br>
+
+            ${error.message}
+        `;
+
+        result.style.color =
+            "#ff5c5c";
+
+    } finally {
+
+        analyzeButton.textContent =
+            "🔍 Analyze Website";
+
+        analyzeButton.disabled =
+            false;
+    }
+}
+
+
+// =====================================
+// WEBSITE ANALYZER BUTTON CLICK
+// =====================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            event.target.closest(
+                "#analyzeWebsiteBtn"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        analyzeWebsite();
+    }
+);
+// =====================================
+// LOAD SCAN HISTORY
+// =====================================
+
+async function loadScanHistory() {
+
+    const container =
+        document.getElementById("scanHistoryContainer");
+
+    if (!container) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/scan-history`
+        );
+
+        const history = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                "Failed to load scan history"
+            );
+        }
+
+        if (history.length === 0) {
+
+            container.innerHTML = `
+                <div class="scan-history-loading">
+                    No scans found yet.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = history.map(
+            function (scan) {
+
+                return `
+                    <div class="scan-history-item">
+
+                        <div>
+                            <strong>
+                                🌐 ${scan.website_url}
+                            </strong>
+
+                            <small>
+                                ${scan.scanned_at}
+                            </small>
+                        </div>
+
+                        <div>
+                            <span>
+                                ${scan.status_code}
+                            </span>
+
+                            <span>
+                                ${scan.response_time} ms
+                            </span>
+
+                            <strong>
+                                ${scan.security_score}/100
+                            </strong>
+                        </div>
+
+                    </div>
+                `;
+            }
+        ).join("");
+
+    } catch (error) {
+
+        console.error(
+            "❌ Scan history failed:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="scan-history-loading">
+                ❌ Unable to load scan history.
+            </div>
+        `;
+    }
+}
+
+
+// =====================================
+// LOAD SCAN HISTORY WHEN PAGE LOADS
+// =====================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        loadScanHistory();
     }
 );

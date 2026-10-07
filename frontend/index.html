@@ -44,8 +44,8 @@
             <header class="topbar">
 
                 <div>
-                    <h1>Security Dashboard</h1>
-                    <p>Monitor your web application in real time.</p>
+                 <h1>Website Health Dashboard</h1>
+<p>Monitor your website’s performance, availability and security.</p>   
                 </div>
 
                 <div class="live-status">
@@ -117,6 +117,44 @@
             <section class="dashboard-grid">
 
                 <!-- Traffic -->
+                <!-- Website Analyzer -->
+<div class="panel website-analyzer-panel">
+
+    <div class="panel-header">
+        <div>
+            <h2>🌐 Website Analyzer</h2>
+            <p>Check your website health, performance and security.</p>
+        </div>
+
+        <span class="badge">ANALYZE</span>
+    </div>
+
+    <div class="website-analyzer-form">
+
+        <input
+            type="text"
+            id="websiteUrl"
+            placeholder="https://example.com"
+        >
+
+        <button
+            id="analyzeWebsiteBtn"
+            class="scan-btn"
+            type="button"
+        >
+            🔍 Analyze Website
+        </button>
+
+    </div>
+
+    <div
+        id="websiteAnalyzerResult"
+        class="scan-result"
+    >
+        Enter a website URL to begin analysis.
+    </div>
+
+</div> 
                 <div class="panel traffic-panel">
 
                     <div class="panel-header">
@@ -210,6 +248,25 @@
         Ready to scan
     </div>
 
+
+</section>
+<!-- Scan History -->
+<section class="panel scan-history-panel">
+
+    <div class="panel-header">
+        <div>
+            <h2>📋 Scan History</h2>
+            <p>View your previous website security scans.</p>
+        </div>
+
+        <span class="badge">HISTORY</span>
+    </div>
+
+    <div id="scanHistoryContainer">
+        <div class="scan-history-loading">
+            Loading scan history...
+        </div>
+    </div>
 
 </section>
             <!-- Alerts -->
