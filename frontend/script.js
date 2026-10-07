@@ -8,7 +8,7 @@
 // LIVE BACKEND URL
 // =====================================
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL = "https://sentinel-backend-odp3.onrender.com";
 
 // =====================================
 // DASHBOARD ELEMENTS
